@@ -1,13 +1,6 @@
 #include <pebble.h>
 
 #define DEBUG_TIME (false)
-#define PBL_IS_ROUND (PBL_IF_ROUND_ELSE(true, false))
-
-#if PBL_IS_ROUND
-  #define FULL_RADIUS_INSET (8)
-#else
-  #define FULL_RADIUS_INSET (0)
-#endif
 
 #define COL_BG (GColorOxfordBlue)
 #define COL_DIAL (GColorWhite)
@@ -85,28 +78,48 @@ static void update_layer(Layer* layer, GContext* ctx) {
   graphics_context_set_fill_color(ctx, COL_BG);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 
-  int full_radius = min(bounds.size.h, bounds.size.w) / 2 - FULL_RADIUS_INSET;
+  int full_radius = min(bounds.size.h, bounds.size.w) / 2;
   int min_deg = 360 * now->tm_min / 60;
 
   int total_mins = 12 * 60;
   int current_mins = now->tm_hour * 60 + now->tm_min;
   int hour_angle = current_mins * TRIG_MAX_ANGLE / total_mins;
   
-  GPoint bounds_center = grect_center_point(&bounds);
+  GPoint bounds_center = GPoint(
+    bounds.origin.x + bounds.size.w / 2,
+    bounds.origin.y + full_radius
+  );
   int min_dial_center_rad = full_radius * 6 / 20;
   GPoint min_dial_center = cartesian_from_polar_trigangle(bounds_center, min_dial_center_rad, hour_angle);
 
+  // hours
   draw_dial(ctx, bounds_center, full_radius);
   draw_ticks(ctx, bounds_center, full_radius);
   
+  // minutes
   int min_rad = full_radius * 11 / 20;
   int hdot_diam = draw_dial(ctx, min_dial_center, min_rad);
   draw_arm(ctx, min_dial_center, min_rad, min_deg);
   
+  // hour dot
   graphics_context_set_fill_color(ctx, COL_HDOT);
   int hdot_rad = hdot_diam / 2;
   GPoint hdot_cent = cartesian_from_polar_trigangle(bounds_center, min_dial_center_rad + min_rad - hdot_rad, hour_angle);
   graphics_fill_circle(ctx, hdot_cent, hdot_rad);
+  
+  // date
+  graphics_context_set_text_color(ctx, COL_TEXT);
+  int h = 30;
+  GRect date_box = GRect(
+    bounds.origin.x,
+    bounds.origin.y + bounds.size.h - h,
+    bounds.size.w,
+    h
+  );
+  GFont f = fonts_get_system_font(FONT_KEY_GOTHIC_24);
+  char t[40];
+  strftime(t, 40, "%b %d %a %H:%M", now);
+  graphics_draw_text(ctx, t, f, date_box, GTextOverflowModeFill, GTextAlignmentCenter, NULL);
 }
 
 static void window_load(Window* window) {
