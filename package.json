@@ -1,12 +1,12 @@
 {
-    "author": "MakeAwesomeHappen",
+    "author": "justinjhendrick",
     "dependencies": {},
     "keywords": [
         "pebble-app"
     ],
-    "name": "watchface-tutorial",
+    "name": "blue-planet",
     "pebble": {
-        "displayName": "Tutorial Watchface",
+        "displayName": "Blue Planet",
         "enableMultiJS": true,
         "messageKeys": [],
         "projectType": "native",
@@ -15,9 +15,7 @@
         },
         "sdkVersion": "3",
         "targetPlatforms": [
-            "emery",
-            "gabbro",
-            "flint"
+            "emery"
         ],
         "uuid": "dbb4e246-c22f-4473-95d4-0124c619498c",
         "watchapp": {

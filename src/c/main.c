@@ -76,7 +76,7 @@ static void update_layer(Layer* layer, GContext* ctx) {
   time_t temp = time(NULL);
   static int frames = 0;
   if (DEBUG_TIME) {
-    temp += 5 * 60 * frames - 1;
+    temp += (5 * 60 - 1) * frames;
     frames++;
   }
   struct tm* now = localtime(&temp);
