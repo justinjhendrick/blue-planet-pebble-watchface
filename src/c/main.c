@@ -109,17 +109,35 @@ static void update_layer(Layer* layer, GContext* ctx) {
   
   // date
   graphics_context_set_text_color(ctx, COL_TEXT);
-  int h = 30;
+  int corner_h = 32;
   GRect date_box = GRect(
     bounds.origin.x,
-    bounds.origin.y + bounds.size.h - h,
-    bounds.size.w,
-    h
+    bounds.origin.y + bounds.size.h - corner_h,
+    bounds.size.w / 3,
+    corner_h
   );
-  GFont f = fonts_get_system_font(FONT_KEY_GOTHIC_24);
+  int mid_h = 30;
+  GRect day_box = GRect(
+    date_box.origin.x + date_box.size.w,
+    bounds.origin.y + bounds.size.h - mid_h,
+    date_box.size.w,
+    mid_h
+  );
+  GRect time_box = GRect(
+    day_box.origin.x + day_box.size.w,
+    date_box.origin.y,
+    date_box.size.w,
+    date_box.size.h
+  );
+  GFont f_lg = fonts_get_system_font(FONT_KEY_GOTHIC_28);
+  GFont f_sm = fonts_get_system_font(FONT_KEY_GOTHIC_24);
   char t[40];
-  strftime(t, 40, "%b %d %a %H:%M", now);
-  graphics_draw_text(ctx, t, f, date_box, GTextOverflowModeFill, GTextAlignmentCenter, NULL);
+  strftime(t, 40, "%b %d", now);
+  graphics_draw_text(ctx, t, f_lg, date_box, GTextOverflowModeFill, GTextAlignmentCenter, NULL);
+  strftime(t, 40, "%a", now);
+  graphics_draw_text(ctx, t, f_sm, day_box, GTextOverflowModeFill, GTextAlignmentCenter, NULL);
+  strftime(t, 40, "%H:%M", now);
+  graphics_draw_text(ctx, t, f_lg, time_box, GTextOverflowModeFill, GTextAlignmentCenter, NULL);
 }
 
 static void window_load(Window* window) {
