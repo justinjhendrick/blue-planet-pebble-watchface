@@ -133,7 +133,11 @@ static void update_layer(Layer* layer, GContext* ctx) {
   graphics_draw_text(ctx, t, f_lg, date_box, GTextOverflowModeFill, GTextAlignmentLeft, NULL);
   strftime(t, 40, "%a", now);
   graphics_draw_text(ctx, t, f_sm, day_box, GTextOverflowModeFill, GTextAlignmentCenter, NULL);
-  strftime(t, 40, "%H:%M", now);
+  if (clock_is_24h_style()) {
+    strftime(t, 40, "%H:%M", now);
+  } else {
+    strftime(t, 40, "%l:%M", now);
+  }
   graphics_draw_text(ctx, t, f_lg, time_box, GTextOverflowModeFill, GTextAlignmentRight, NULL);
 }
 
