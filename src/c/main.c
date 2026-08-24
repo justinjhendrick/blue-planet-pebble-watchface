@@ -67,7 +67,7 @@ static void update_layer(Layer* layer, GContext* ctx) {
   graphics_context_set_fill_color(ctx, COL_BG);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 
-  int border = 2;
+  int border = 0;
   int full_radius = bounds.size.w / 2 + border;
   int min_deg = 360 * now->tm_min / 60;
 
@@ -79,10 +79,10 @@ static void update_layer(Layer* layer, GContext* ctx) {
     bounds.origin.x + bounds.size.w / 2,
     bounds.origin.y + bounds.size.w / 2
   );
-  int min_dial_center_rad = full_radius * 4 / 20;
+  int min_dial_center_rad = full_radius * 6 / 20;
   GPoint min_dial_center = cartesian_from_polar_trigangle(bounds_center, min_dial_center_rad, hour_angle);
   int dial_thick = full_radius * 4 / 20;
-  int mdial_thick = full_radius * 2 / 20;
+  int mdial_thick = full_radius * 3 / 40;
 
   // hours
   draw_dial(ctx, bounds_center, full_radius, dial_thick);
@@ -95,12 +95,15 @@ static void update_layer(Layer* layer, GContext* ctx) {
   draw_arm(ctx, min_dial_center, min_rad - mdial_thick, min_deg);
   
   // hour mark
-  graphics_context_set_stroke_color(ctx, COL_HDOT);
-  graphics_context_set_stroke_width(ctx, 7);
   GPoint hmark_inner = cartesian_from_polar_trigangle(bounds_center, min_dial_center_rad + min_rad - mdial_thick + tick_setback, hour_angle);
   GPoint hmark_outer = cartesian_from_polar_trigangle(bounds_center, full_radius - tick_setback, hour_angle);
+  graphics_context_set_stroke_color(ctx, GColorOxfordBlue);
+  graphics_context_set_stroke_width(ctx, 9);
   graphics_draw_line(ctx, hmark_inner, hmark_outer);
-  
+  graphics_context_set_stroke_width(ctx, 5);
+  graphics_context_set_stroke_color(ctx, GColorCyan);
+  graphics_draw_line(ctx, hmark_inner, hmark_outer);
+
   // date
   graphics_context_set_text_color(ctx, COL_TEXT);
   int corner_h = 32;
