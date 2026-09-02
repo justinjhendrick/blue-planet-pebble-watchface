@@ -6,7 +6,8 @@
 #define COL_DIAL (GColorWhite)
 #define COL_TICK (GColorOxfordBlue)
 #define COL_ARM (GColorWhite)
-#define COL_HDOT (GColorBlue)
+#define COL_HMARK_INNER (GColorCyan)
+#define COL_HMARK_OUTER (GColorOxfordBlue)
 #define COL_TEXT (GColorWhite)
 
 static Window* s_window;
@@ -58,12 +59,12 @@ static void update_layer(Layer* layer, GContext* ctx) {
   time_t temp = time(NULL);
   static int frames = 0;
   if (DEBUG_TIME) {
-    temp += (5 * 60 - 1) * frames;
+    temp = 1788289200 + 2 * 60 * frames;
     frames++;
   }
   struct tm* now = localtime(&temp);
   GRect bounds = layer_get_bounds(layer);
-  
+
   graphics_context_set_fill_color(ctx, COL_BG);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 
@@ -74,7 +75,7 @@ static void update_layer(Layer* layer, GContext* ctx) {
   int total_mins = 12 * 60;
   int current_mins = now->tm_hour * 60 + now->tm_min;
   int hour_angle = current_mins * TRIG_MAX_ANGLE / total_mins;
-  
+
   GPoint bounds_center = GPoint(
     bounds.origin.x + bounds.size.w / 2,
     bounds.origin.y + bounds.size.w / 2
@@ -88,20 +89,20 @@ static void update_layer(Layer* layer, GContext* ctx) {
   draw_dial(ctx, bounds_center, full_radius, dial_thick);
   int tick_setback = 4;
   draw_ticks(ctx, bounds_center, full_radius, dial_thick, tick_setback);
-  
+
   // minutes
   int min_rad = full_radius - dial_thick - min_dial_center_rad;
   draw_dial(ctx, min_dial_center, min_rad, mdial_thick);
   draw_arm(ctx, min_dial_center, min_rad - mdial_thick, min_deg);
-  
+
   // hour mark
   GPoint hmark_inner = cartesian_from_polar_trigangle(bounds_center, min_dial_center_rad + min_rad - mdial_thick + tick_setback, hour_angle);
   GPoint hmark_outer = cartesian_from_polar_trigangle(bounds_center, full_radius - tick_setback, hour_angle);
-  graphics_context_set_stroke_color(ctx, GColorOxfordBlue);
+  graphics_context_set_stroke_color(ctx, COL_HMARK_OUTER);
   graphics_context_set_stroke_width(ctx, 9);
   graphics_draw_line(ctx, hmark_inner, hmark_outer);
   graphics_context_set_stroke_width(ctx, 5);
-  graphics_context_set_stroke_color(ctx, GColorCyan);
+  graphics_context_set_stroke_color(ctx, COL_HMARK_INNER);
   graphics_draw_line(ctx, hmark_inner, hmark_outer);
 
   // date
